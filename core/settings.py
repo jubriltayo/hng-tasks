@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wgw%znsv-$y-pi2wx(y^p&w7wg)6m46!h-2d!bmt=pbs=pw+oc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["hng-task-0-me.pxxl.click"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
