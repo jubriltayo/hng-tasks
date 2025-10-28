@@ -2,8 +2,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
-from django.http import Http404
 import logging
 
 from .models import Country, SystemStatus
@@ -17,10 +15,13 @@ logger = logging.getLogger(__name__)
 
 class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    serializer_class = CountrySerializer
+    filter_backends = [DjangoFilterBackend]
     filterset_class = CountryFilter
-    ordering_fields = ['name', 'population', 'estimated_gdp']
-    ordering = ['name']
+    # ordering_fields = ['name', 'population', 'estimated_gdp']
+    # ordering = ['name']
+    lookup_field = 'name'
+    lookup_url_kwarg = 'name'
 
     def get_serializer_class(self):
         return CountrySerializer
@@ -39,36 +40,38 @@ class CountryViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """Get one country by name"""
         try:
-            instance = self.get_object()
+            name = kwargs.get('name')
+            instance = Country.objects.get(name__iexact=name)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
-        except Http404:
+        except Country.DoesNotExist:
             return Response(
-                {"error": "Country not found."},
+                {"error": "Country not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             logger.error(f"Error retrieving country: {str(e)}")
             return Response(
-                {"error": "Internal server error."},
+                {"error": "Internal server error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
             
     def destroy (self, request, *args, **kwargs):
         """Delete a country record"""
         try:
-            instance = self.get_object()
+            name = kwargs.get('name')
+            instance = Country.objects.get(name__iexact=name)
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Http404:
+        except Country.DoesNotExist:
             return Response(
-                {"error": "Country not found."},
+                {"error": "Country not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             logger.error(f"Error deleting country: {str(e)}")
             return Response(
-                {"error": "Internal server error."},
+                {"error": "Internal server error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         

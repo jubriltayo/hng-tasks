@@ -8,6 +8,4 @@ router.register(r'status', StatusViewSet, basename='status')
 
 urlpatterns = [
     path('', include(router.urls)),
-
-    path('countries/image', CountryViewSet.as_view({'get': 'image'}), name='countries-image'),
 ]

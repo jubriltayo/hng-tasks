@@ -37,13 +37,33 @@ class Country(models.Model):
 
     def calculate_estimated_gdp(self):
         """ Calculate estimated GDP based on population and exchange rate. """
-        if self.population and self.exchange_rate:
-            random_multiplier = random.uniform(1000, 2000)
-            gdp = (self.population * random_multiplier) / float(self.exchange_rate)
-            return round(gdp, 2)
-        return None
+        try:
+            if self.population and self.exchange_rate:
+                population = int(self.population)
+                exchange_rate = float(self.exchange_rate)
+
+                random_multiplier = random.uniform(1000, 2000)
+                gdp = (population * random_multiplier) / exchange_rate
+                return round(gdp, 2)
+            return None
+        except (TypeError, ValueError, ZeroDivisionError) as e:
+            print(f"Error calculating GDP for {self.name}: {str(e)}")
+            return None
     
     def save(self, *args, **kwargs):
+        # Ensure numeric fields are properly converted before saving
+        if self.exchange_rate and isinstance(self.exchange_rate, str):
+            try:
+                self.exchange_rate = float(self.exchange_rate)
+            except (ValueError, TypeError):
+                self.exchange_rate = None
+
+        if self.estimated_gdp and isinstance(self.estimated_gdp, str):
+            try:
+                self.estimated_gdp = float(self.estimated_gdp)
+            except (ValueError, TypeError):
+                self.estimated_gdp = None
+                
         # Calculate estimated GDP before saving
         if self.population and self.exchange_rate:
             self.estimated_gdp = self.calculate_estimated_gdp()
@@ -57,7 +77,7 @@ class Country(models.Model):
 
 class SystemStatus(models.Model):
     total_countries = models.IntegerField(default=0)
-    last_updated = models.DateTimeField(default=timezone.now)
+    last_refreshed_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = 'system_status'
@@ -72,5 +92,5 @@ class SystemStatus(models.Model):
     
     def update_status(self):
         self.total_countries = Country.objects.count()
-        self.last_updated = timezone.now()
+        self.last_refreshed_at = timezone.now()
         self.save()

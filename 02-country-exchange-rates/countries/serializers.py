@@ -24,5 +24,5 @@ class SystemStatusSerializer(serializers.ModelSerializer):
         model = SystemStatus
         fields = [
             'total_countries',
-            'last_updated',
+            'last_refreshed_at',
         ]

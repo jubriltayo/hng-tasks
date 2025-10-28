@@ -40,7 +40,7 @@ class SummaryImageGenerator:
             # Draw content
             draw.text((50, 50), "Country GDP Summary", fill='black', font=title_font)
             draw.text((50, 100), f"Total Countries: {total_countries}", fill='black', font=header_font)
-            draw.text((50, 130), f"Last Refresh: {status.last_updated}", fill='black', font=header_font)
+            draw.text((50, 130), f"Last Refresh: {status.last_refreshed_at}", fill='black', font=header_font)
             draw.text((50, 180), "Top 5 Countries by GDP:", fill='black', font=header_font)
             
             y = 220
