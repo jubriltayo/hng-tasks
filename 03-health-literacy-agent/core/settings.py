@@ -11,8 +11,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
+
+print("=== DJANGO STARTING ===", file=sys.stderr)
+print(f"Python: {sys.version}", file=sys.stderr)
+print(f"DJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE')}", file=sys.stderr)
+print(f"SECRET_KEY exists: {bool(os.environ.get('SECRET_KEY'))}", file=sys.stderr)
+
 
 load_dotenv()
 
