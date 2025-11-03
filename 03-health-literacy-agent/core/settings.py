@@ -37,7 +37,8 @@ else:
         'localhost', 
         '127.0.0.1',
         '.railway.app',
-        '.up.railway.app'
+        '.up.railway.app',
+        'hng-tasks-production-de98.up.railway.app'
     ]
 
 
