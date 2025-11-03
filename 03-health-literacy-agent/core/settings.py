@@ -11,15 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
-import sys
 from pathlib import Path
 from dotenv import load_dotenv
-
-print("=== DJANGO STARTING ===", file=sys.stderr)
-print(f"Python: {sys.version}", file=sys.stderr)
-print(f"DJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE')}", file=sys.stderr)
-print(f"SECRET_KEY exists: {bool(os.environ.get('SECRET_KEY'))}", file=sys.stderr)
-
 
 load_dotenv()
 
@@ -53,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # 'django.contrib.staticfiles',
 
     # Third-party apps
     'corsheaders',
@@ -137,10 +129,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-# STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 APPEND_SLASH = False
 
