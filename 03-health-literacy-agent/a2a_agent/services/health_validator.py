@@ -12,7 +12,8 @@ class HealthTopicValidator:
             'symptom', 'treatment', 'diagnosis', 'condition', 'disease',
             'pain', 'illness', 'injury', 'recovery', 'therapy', 'wellness',
             'nutrition', 'diet', 'exercise', 'fitness', 'mental', 'stress',
-            'sleep', 'vitamin', 'weight', 'workout', 'yoga', 'meditation'
+            'sleep', 'vitamin', 'weight', 'workout', 'yoga', 'meditation',
+            'cancer', 'diabetes', 'heart', 'lung', 'brain', 'blood'
         ],
         'body_systems': [
             'heart', 'lung', 'brain', 'nerve', 'muscle', 'bone', 'blood',
@@ -27,39 +28,36 @@ class HealthTopicValidator:
         ]
     }
     
-    # ADD STRONG OFF-TOPIC FILTERS
-    OFF_TOPIC_KEYWORDS = [
+    # LESS restrictive off-topic filters
+    STRONG_OFF_TOPIC_KEYWORDS = [
         # Finance
         'bitcoin', 'crypto', 'stock', 'investment', 'money', 'bank', 'finance',
-        'currency', 'trading', 'market', 'economy', 'price', 'profit',
+        'currency', 'trading', 'market', 'economy',
         
-        # Technology  
-        'computer', 'phone', 'software', 'programming', 'code', 'javascript',
-        'python', 'react', 'website', 'app', 'digital', 'online',
+        # Technology (but allow health tech)
+        'javascript', 'python', 'react', 'website', 'app development',
         
         # Entertainment
         'movie', 'music', 'game', 'sport', 'celebrity', 'entertainment',
-        'netflix', 'youtube', 'instagram', 'social media',
         
         # Other
-        'weather', 'travel', 'car', 'pet', 'animal', 'dog', 'cat', 'cooking',
-        'recipe', 'food recipe', 'restaurant', 'shopping', 'fashion'
+        'weather', 'travel', 'car repair', 'pet care'
     ]
     
     def is_health_related(self, user_message):
-        """Check if message is health-related with debugging"""
+        """More permissive health topic detection"""
         if not user_message or len(user_message.strip()) < 2:
             logger.debug(f"Message too short: '{user_message}'")
             return False
         
         message_lower = user_message.lower()
         
-        # FIRST: Check for off-topic keywords (STRONG FILTER)
-        if any(off_topic in message_lower for off_topic in self.OFF_TOPIC_KEYWORDS):
-            logger.debug(f"REJECTED - Off-topic keyword detected: '{user_message}'")
+        # ONLY block clearly off-topic
+        if any(off_topic in message_lower for off_topic in self.STRONG_OFF_TOPIC_KEYWORDS):
+            logger.debug(f"REJECTED - Clearly off-topic: '{user_message}'")
             return False
         
-        # SECOND: Check for health keywords
+        # Check for health keywords
         health_found = False
         for category, keywords in self.HEALTH_KEYWORDS.items():
             for keyword in keywords:
@@ -70,20 +68,22 @@ class HealthTopicValidator:
             if health_found:
                 break
         
-        # THIRD: Check for medical question patterns
+        # Check for question patterns
         question_patterns = [
             r'what is (.+)', r'explain (.+)', r'tell me about (.+)',
             r'meaning of (.+)', r'define (.+)', r'how does (.+) work',
-            r'what are (.+)', r'can you explain (.+)'
+            r'what are (.+)', r'can you explain (.+)', r'what causes (.+)'
         ]
         
         question_found = False
         for pattern in question_patterns:
             if re.search(pattern, message_lower):
                 question_found = True
-                logger.debug(f"Medical question pattern found: '{pattern}' in '{user_message}'")
+                logger.debug(f"Question pattern found: '{pattern}' in '{user_message}'")
                 break
         
-        result = health_found or question_found
-        logger.debug(f"Final health_related result for '{user_message}': {result}")
+        # Be more permissive - if it passes the strong filter, assume health-related
+        result = health_found or question_found or len(message_lower.split()) <= 4
+        logger.info(f"Health validation for '{user_message}': {result}")
         return result
+    

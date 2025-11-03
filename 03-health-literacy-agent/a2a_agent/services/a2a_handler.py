@@ -52,9 +52,8 @@ class A2ARequestHandler:
         
         if not user_message:
             response_text = self._get_greeting()
-        elif not self.health_service.is_health_related(user_message):
-            response_text = self._get_off_topic_response()
         else:
+            # ALWAYS use the AI service for responses
             response_text = self.health_service.explain_medical_term(user_message)
         
         return A2AResponseBuilder.build_success(
@@ -72,17 +71,14 @@ class A2ARequestHandler:
         return ""
     
     def _get_greeting(self):
-        return "Hello! I'm HealthLiteracy AI 🩺 I help explain medical terms. What would you like to learn about?"
-    
-    def _get_off_topic_response(self):
-        return "I specialize in health education! Ask me about medical terms, conditions, or health concepts."
+        return "Hello! I'm HealthLiteracy AI 🩺 I help explain medical terms and health concepts. What would you like to learn about?"
     
     def _handle_execute(self, a2a_data):
         """Handle execute method"""
         from ..utils.response_builder import A2AResponseBuilder
         params = a2a_data.get('params', {})
         
-        response_text = "HealthLiteracy AI is ready to assist with medical education!"
+        response_text = "HealthLiteracy AI is ready to assist with medical education and health information!"
         return A2AResponseBuilder.build_success(
             response_text,
             a2a_data['id'],
