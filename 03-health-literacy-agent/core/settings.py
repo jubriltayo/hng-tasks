@@ -19,27 +19,23 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# Security
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&8*932d(24yf^2m(y9wz+3it&%a4s*tj0k6yjy4mfprid#te_g')
+ALLOWED_HOSTS = []
 
+# Add domain if provided
+DOMAIN = os.environ.get('DOMAIN')
+if DOMAIN:
+    ALLOWED_HOSTS.append(DOMAIN)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-
-# ALLOWED_HOSTS = [
-#     'hng-tasks-production-de98.up.railway.app',
-#     'localhost', 
-#     '127.0.0.1',
-#     '.railway.app',
-#     '.up.railway.app',
-#     '0.0.0.0', 
-# ]
-
-ALLOWED_HOSTS = ['*']
+# For development
+ALLOWED_HOSTS.extend([
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+])
 
 
 # Application definition
@@ -143,19 +139,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==================== CORS ====================
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ['*']
-CORS_ALLOW_HEADERS = ['*']
 
-# CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
-# CORS_ALLOW_HEADERS = [
-#     'accept', 'accept-encoding', 'authorization', 'content-type',
-#     'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
-# ]
+# ==================== SECURITY ====================
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True 
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # ==================== GEMINI ====================
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-
-# Disable SSL redirect and other security stuff
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
