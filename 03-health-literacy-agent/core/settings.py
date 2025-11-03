@@ -23,23 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&8*932d(24yf^2m(y9wz+3it&%a4s*tj0k6yjy4mfprid#te_g')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True
+# DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = [
-    'hng-tasks-production-de98.up.railway.app',
-    'localhost', 
-    '127.0.0.1',
-    '.railway.app',
-    '.up.railway.app',
-    '0.0.0.0', 
-]
+# ALLOWED_HOSTS = [
+#     'hng-tasks-production-de98.up.railway.app',
+#     'localhost', 
+#     '127.0.0.1',
+#     '.railway.app',
+#     '.up.railway.app',
+#     '0.0.0.0', 
+# ]
+
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -140,12 +143,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==================== CORS ====================
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ['*']
+CORS_ALLOW_HEADERS = ['*']
 
-CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
-CORS_ALLOW_HEADERS = [
-    'accept', 'accept-encoding', 'authorization', 'content-type',
-    'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
-]
+# CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
+# CORS_ALLOW_HEADERS = [
+#     'accept', 'accept-encoding', 'authorization', 'content-type',
+#     'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
+# ]
 
 # ==================== GEMINI ====================
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+
+# Disable SSL redirect and other security stuff
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
